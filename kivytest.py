@@ -18,7 +18,12 @@ class SongImageView(RecycleView):
         super(SongImageView, self).__init__(**kwargs)
         self.data = [{"source": "kivy.png"} for x in range(5)]
 
+KV = '''
+<SongImageView>:
+    
 
+
+'''
 
 
 class Test(App):
