@@ -1,6 +1,5 @@
 # coding:utf-8
 #pythonw {filename}
-import wx
 import re
 import json
 import requests
@@ -55,7 +54,7 @@ def all_song_data(usrid, maxpage):#usrid:string maxpage:int
 """
 #ランクを受けて一つ上の人のusridとmaxpageを返す
 def ranker_above(rank):#retrun id,maxpage
-    page,line = divmod(rank-1, 50)
+    page,line = divmod(rank, 50)
     usr_rank_page_html = requests.get(MAIN_URL + "/global/{}".format(page+1))
     usr_rank_soup = BeautifulSoup(usr_rank_page_html.text, "html.parser")
     ranking_list = usr_rank_soup.tbody.find_all("tr")[line-1]
@@ -123,41 +122,4 @@ def click_button_event(event):
 	for songs in range(0,10):
 	    listbox.Append(gaplist[songs]["songname"]+"\n"+"gap = {}".format(gaplist[songs]["pp_gap"]))
 	event.Skip()
-
-app = wx.App()
-main_frame = wx.Frame(None, wx.ID_ANY, u"課題曲生成機", size=(540, 280))
-menu_panel = wx.Panel(main_frame, wx.ID_ANY, pos=(0, 0), size=(540,30))
-menu_panel.SetBackgroundColour('#FF0000')
-panel = wx.Panel(main_frame, wx.ID_ANY, pos=(0, 20), size=(540,250))
-menu_panel.SetBackgroundColour('#000000')
-
-listbox = wx.ListBox(panel, wx.ID_ANY, size=(540, 10), choices=[], style=wx.LB_SINGLE)
-refresh_button = wx.Button(menu_panel, wx.ID_ANY, '更新')
-main_frame.Bind(wx.EVT_BUTTON, click_button_event, refresh_button)
-
-"""
-gaplist = main()
-for songs in range(0,10):
-    listbox.Append(gaplist[songs]["songname"]+"\n"+"gap = {}".format(gaplist[songs]["pp_gap"]))
-"""
-
-menu_layout = wx.BoxSizer(wx.VERTICAL)
-menu_layout.Add(refresh_button, 0, wx.GROW)
-menu_layout.Add(menu_panel, 1, wx.EXPAND)
-menu_layout.Add(panel, 1, wx.EXPAND)
-
-layout = wx.BoxSizer(wx.VERTICAL)
-
-layout.Add(listbox, 2, wx.EXPAND, 0)
-
-panel.SetSizer(layout)
-
-main_frame.SetSizer(menu_layout)
-main_frame.Show()
-app.MainLoop()
-
-
-
-
-
 
