@@ -1,0 +1,25 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>eel_exsample</title>
+    <script type="text/javascript" src="/eel.js"></script>
+    <script type="text/javascript">
+        // 非同期でPythonスクリプトを実行する
+        function link1Click() {
+            eel.link1_click();
+        }
+        
+        // Pythonスクリプトに引数を渡し、結果の帰り値を待つ例
+        async function link2Click() {
+            let val = await eel.link2_click("args-test")();
+            alert(val);
+        }
+    </script>
+</head>
+
+<body>
+    <a href="#" onclick="link1Click()">Link1</a>
+    <br>
+    <a href="#" onclick="link2Click()">Link2</a>
+</body>
+</html>

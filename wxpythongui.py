@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from functools import wraps
 import time
 from tqdm import tqdm
-def stop_watch(func) :
+def stop_watch(func):
     @wraps(func)
     def wrapper(*args, **kargs) :
         start = time.time()

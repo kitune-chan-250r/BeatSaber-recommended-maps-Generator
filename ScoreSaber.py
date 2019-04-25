@@ -82,5 +82,6 @@ def compare_song_pp(usr_songdata, above_usr_songdata):
             compare_result.append(ppgap_data)
     pp_gap_list_sorted = sorted(compare_result, key=lambda x:x["pp_gap"], reverse=True)
     return pp_gap_list_sorted
-
-
+#songname:str usr_songdata:dic -> songdata:dict
+def srch_song_data(songname, usr_songdata):
+    pass

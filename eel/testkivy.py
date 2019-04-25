@@ -4,7 +4,7 @@ from kivy.uix.button import Button
 
 
 items = [
-    {"color":(1, 1, 1, 1), "font_size": "20sp", "text": "white",     "input_data": ["some","random","data"]},
+    {"color":(1, 1, 1, 1), "font_size": "20sp", "text": "white\nhello",     "input_data": ["some","random","data"]},
     {"color":(.5,1, 1, 1), "font_size": "30sp", "text": "lightblue", "input_data": [1,6,3]},
     {"color":(.5,.5,1, 1), "font_size": "40sp", "text": "blue",      "input_data": [64,16,9]},
     {"color":(.5,.5,.5,1), "font_size": "70sp", "text": "gray",      "input_data": [8766,13,6]},
