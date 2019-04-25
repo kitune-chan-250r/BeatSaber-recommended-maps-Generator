@@ -1,9 +1,4 @@
 import sys
-"""
-from PySide2.QtWidgets import *
-from PySide2.QtGui import *
-from PySide2.QtCore import *
-"""
 from PySide2 import QtCore
 from PySide2.QtWidgets import *
 from PySide2.QtGui import *
@@ -69,7 +64,6 @@ class CustomQWidget(QWidget):
     def setRank(self, text):
         self.rankQLabel.setText(text)
     
-
     def setIcon (self, imagePath):
         #画像を追加、リサイズ
         image = QPixmap(imagePath)
@@ -88,7 +82,6 @@ class AppMainWindow(QMainWindow):
         self.myQListWidget = QListWidget(self)
 
         for song in songs:
-            
             song_name = song["song"]
             pp = song["pp"] + "pp"
             img = song["image"]
@@ -110,6 +103,7 @@ class AppMainWindow(QMainWindow):
             # Add QListWidgetItem into QListWidget
             self.myQListWidget.addItem(myQListWidgetItem)
             self.myQListWidget.setItemWidget(myQListWidgetItem, myQCustomQWidget)
+
         self.setCentralWidget(self.myQListWidget)
 
 app = QApplication(sys.argv)
