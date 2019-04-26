@@ -1,26 +1,20 @@
+import tempfile
+import requests
+import shutil
+import os
+#tempファイル生成 /imports/images/songs/94732B3C04674601C131430DD2B28C7E.png
+cwd = os.getcwd()
+img_tmpdir = tempfile.mkdtemp(dir=cwd)
 
-from PySide2.QtWidgets import *
+img_id = "/imports/images/songs/94732B3C04674601C131430DD2B28C7E.png"
 
-class MyLayoutDialog(QDialog):
-    def __init__(self, parent=None):
-        super(MyLayoutDialog, self).__init__(parent)
-        self.setWindowTitle("My Layout Dialog")
-        
-        # 並べるボタンを作成
-        buttonA = QPushButton("Button A")
-        buttonB = QPushButton("Button B")
-        buttonC = QPushButton("Button C")
-        
-        # 水平方向にボタンを並べる
-        layout = QHBoxLayout()
-        layout.addWidget(buttonA)
-        layout.addWidget(buttonB)
-        layout.addWidget(buttonC)
-        self.setLayout(layout)
+def dl_imgfile(dir, url, songname):
+    url = "https://scoresaber.com" + url
+    img = requests.get(url, stream=True)
+    with open(dir + "/", 'wb') as f:
+            f.write(img.content)
 
-if __name__ == '__main__':
-    import sys
-    app = QApplication(sys.argv)
-    ui = MyLayoutDialog()
-    ui.show()
-    app.exec_()
+dl_imgfile(img_tmpdir, img_id, "M2U - Quo Vadis Expert+")
+print(img_tmpdir)
+#tempファイル削除
+#shutil.rmtree(img_tmpdir)
