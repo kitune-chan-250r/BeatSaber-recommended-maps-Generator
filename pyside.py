@@ -94,12 +94,12 @@ class ButtonWidgets(QWidget):
             accuracy = "accuracy: {}%".format(song["accuracy"])
             rank = "#" + song["rank"]
             #make image
-            img = "./assets/ki - vy.png"
+            #img = "./assets/ki - vy.png"
 
             myQCustomQWidget = CustomQWidget()
             myQCustomQWidget.setSong(song_name)
             myQCustomQWidget.setPP(pp)
-            myQCustomQWidget.setIcon(img)
+            #myQCustomQWidget.setIcon(img)
             myQCustomQWidget.setPPgap(ppgap)
             myQCustomQWidget.setAccuracy(accuracy)
             myQCustomQWidget.setRank(rank)
@@ -131,19 +131,39 @@ class ButtonWidgets(QWidget):
 
     def ref_button(self):
         username = self.usernameBox.text()
-        self.myQListWidget.clear()
-        self.usernameBox.setText(username + " push")
+        self.bgp = BuckGroundProcess()
+        self.bgp.addItem_QList.connect(self.addItem_refresh)
+        self.bgp.setup(username)
+        self.bgp.start()
+
+    def addItem_refresh(self, widget_item):
+        self.myQListWidget.addItem(widget_item)
+
+#qthread class
+class BuckGroundProcess(QThread):
+    addItem_QList = Signal( str ) #listにアイテムを渡す
+    setItem_Qlist = Signal()
+    def __init__(self,parent=None):
+        QThread.__init__(self,parent)
+        self.username = ""
+
+    def setup(self, username):
+        self.username = username
+
+    def run(self): #バックグラウンド処理
         #userid,rank = ScoreSaber.srch_usr_name(username)
+        bw = ButtonWidgets()
         global songs
         #songs = ScoreSaber.all_song_data(userid)
-
-        my_userid,my_rank = ScoreSaber.srch_usr_name(username)
+        print(self.username)
+        my_userid,my_rank = ScoreSaber.srch_usr_name(self.username)
         aboveusr_id = ScoreSaber.get_ranker(my_rank-1)
 
         my_songdata = ScoreSaber.all_song_data(my_userid)
         aboveusr_songdata = ScoreSaber.all_song_data(aboveusr_id)
 
         pp_gap = ScoreSaber.compare_song_pp(my_songdata, aboveusr_songdata)
+        
         songs = pp_gap[0:5]
         #songs.append({"song":"songname4", "pp": "154", "image":"kivy.png", "accuracy": "50%", "rank": "1", "ppgap": "+11"})
         #refresh list
@@ -167,15 +187,20 @@ class ButtonWidgets(QWidget):
             myQCustomQWidget.setAccuracy(accuracy)
             myQCustomQWidget.setRank(rank)
 
-            myQListWidgetItem = QListWidgetItem(self.myQListWidget)
+            myQListWidgetItem = QListWidgetItem(bw.myQListWidget)
             # Set size hint
             myQListWidgetItem.setSizeHint(myQCustomQWidget.sizeHint())
             # Add QListWidgetItem into QListWidget
-            self.myQListWidget.addItem(myQListWidgetItem)
-            self.myQListWidget.setItemWidget(myQListWidgetItem, myQCustomQWidget)
+            #bw.myQListWidget.addItem(myQListWidgetItem)
+            self.signal_WidgetItem(myQListWidgetItem)
+            bw.myQListWidget.setItemWidget(myQListWidgetItem, myQCustomQWidget)
         
-        self.myQListWidget.update()
-
+        bw.myQListWidget.update()
+        self.finished.emit()
+    def signal_WidgetItem(self,widget_item):#ユーザー定義シグナル(addItem_QList)を呼ぶ
+        self.addItem_QList.emit(widget_item)
+    def signal_CustomWidget(self, Custom_widget):
+        self.setItem_Qlist.emit(CustomQWidget)
 
 #main window
 class AppMainWindow(QMainWindow):
