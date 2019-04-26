@@ -1,7 +1,7 @@
 import sys
-from PySide2 import QtCore
 from PySide2.QtWidgets import *
 from PySide2.QtGui import *
+from PySide2.QtCore import *
 import ScoreSaber
 
 songs = [{"song":"songname", "pp": "123", "image":"kivy.png", "accuracy": "50%", "rank": "43", "ppgap": "+11"},
@@ -20,9 +20,7 @@ class CustomQWidget(QWidget):
         self.rankQLabel      = QLabel()
         #レイアウトへwidget追加
         self.textQVBoxLayout.addWidget(self.usersppQLabel)
-        #self.textQVBoxLayout.addWidget(self.ppgapQLabel)
         self.textQVBoxLayout.addWidget(self.accuracyQLabel)
-        #self.textQVBoxLayout.addWidget(self.rankQLabel)
         
         #レイアウト作成
         self.songQVBoxLayout = QVBoxLayout()
@@ -70,15 +68,13 @@ class CustomQWidget(QWidget):
         resized = image.scaled(64, 64)
         self.iconQLabel.setPixmap(resized)
 
-class AppMainWindow(QMainWindow):
-    def __init__ (self):
-        super(AppMainWindow, self).__init__()
-        #window setting
-        self.setMinimumHeight(500)
-        self.setMinimumWidth(700)
-        self.setMaximumHeight(500)
-        self.setMaximumWidth(700)
-        # Create QListWidget
+class ButtonWidgets(QWidget):
+    """docstring for ButtonWidgets"""
+    def __init__(self, parent = None):
+        super(ButtonWidgets, self).__init__()
+        self.MainWindowLayout = QVBoxLayout()
+        self.buttonLayout = QHBoxLayout()
+        #make list widget
         self.myQListWidget = QListWidget(self)
 
         for song in songs:
@@ -103,9 +99,36 @@ class AppMainWindow(QMainWindow):
             # Add QListWidgetItem into QListWidget
             self.myQListWidget.addItem(myQListWidgetItem)
             self.myQListWidget.setItemWidget(myQListWidgetItem, myQCustomQWidget)
+        
+        #button set
+        refButton = QPushButton("ref")
+        usernameBox = QLineEdit()
 
-        self.setCentralWidget(self.myQListWidget)
+        self.myQListWidget.setAttribute(Qt.WA_MacShowFocusRect, 0)
+        self.myQListWidget.setFrameStyle(QFrame.NoFrame)
+        
+        #add widget
+        self.buttonLayout.addWidget(refButton)
+        self.buttonLayout.addWidget(usernameBox)
 
+        #set layout and wedgets -> main layout
+        self.MainWindowLayout.addWidget(self.myQListWidget)
+        self.MainWindowLayout.addLayout(self.buttonLayout)
+        # set layout
+        self.setLayout(self.MainWindowLayout)
+
+#main window
+class AppMainWindow(QMainWindow):
+    def __init__ (self):
+        super(AppMainWindow, self).__init__()
+        #window setting
+        self.setMinimumHeight(500)
+        self.setMinimumWidth(700)
+        self.setMaximumHeight(500)
+        self.setMaximumWidth(700)
+
+        windowItems = ButtonWidgets()
+        self.setCentralWidget(windowItems)
 app = QApplication(sys.argv)
 window = AppMainWindow()
 window.show()
