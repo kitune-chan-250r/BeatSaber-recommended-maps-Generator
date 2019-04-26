@@ -11,10 +11,13 @@ img_id = "/imports/images/songs/94732B3C04674601C131430DD2B28C7E.png"
 def dl_imgfile(dir, url, songname):
     url = "https://scoresaber.com" + url
     img = requests.get(url, stream=True)
-    with open(dir + "/", 'wb') as f:
+    path = dir + "/" + songname + ".png"
+    with open(path, 'wb') as f:
             f.write(img.content)
+    return path
 
-dl_imgfile(img_tmpdir, img_id, "M2U - Quo Vadis Expert+")
-print(img_tmpdir)
+
+di = dl_imgfile(img_tmpdir, img_id, "M2U - Quo Vadis Expert+")
+print(di)
 #tempファイル削除
-#shutil.rmtree(img_tmpdir)
+shutil.rmtree(img_tmpdir)

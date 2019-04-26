@@ -3,10 +3,18 @@ from PySide2.QtWidgets import *
 from PySide2.QtGui import *
 from PySide2.QtCore import *
 import ScoreSaber
+import requests
+
+
 
 songs = [{"song":"songname", "pp": "123", "image":"kivy.png", "accuracy": "50%", "rank": "43", "ppgap": "+11"},
              {"song":"songname2", "pp": "32", "image":"kivy.png", "accuracy": "50%", "rank": "43", "ppgap": "+11"},
              {"song":"songname3", "pp": "54", "image":"kivy.png", "accuracy": "50%", "rank": "43", "ppgap": "+11"}]
+
+def dl_imgfile(url):
+    url = "https://scoresaber.com" + url
+    img = requests.get(url, stream=True)
+    return img.content
 
 #widgetsの設定
 class CustomQWidget(QWidget):
@@ -64,8 +72,10 @@ class CustomQWidget(QWidget):
     
     def setIcon (self, imagePath):
         #画像を追加、リサイズ
-        image = QPixmap(imagePath)
-        resized = image.scaled(64, 64)
+        #image = QPixmap(imagePath)
+        qimage = QPixmap()
+        qimage.loadFromData(imagePath)
+        resized = qimage.scaled(50, 50)
         self.iconQLabel.setPixmap(resized)
 
 class ButtonWidgets(QWidget):
@@ -80,10 +90,11 @@ class ButtonWidgets(QWidget):
         for song in songs:
             song_name = song["song"]
             pp = song["pp"] + "pp"
-            img = song["image"]
             ppgap = song["ppgap"]
             accuracy = "accuracy: {}%".format(song["accuracy"])
             rank = "#" + song["rank"]
+            #make image
+            img = "./assets/ki - vy.png"
 
             myQCustomQWidget = CustomQWidget()
             myQCustomQWidget.setSong(song_name)
@@ -142,7 +153,9 @@ class ButtonWidgets(QWidget):
             tmp = ScoreSaber.srch_song_data(song_name, my_songdata)
 
             pp = str(tmp["pp"]) + "pp"
-            img = "kivy.png"
+
+            img = dl_imgfile(tmp["img"])
+            print(img)
             accuracy = tmp["accuracy"]
             rank = str(tmp["rank"])
 
@@ -169,13 +182,18 @@ class AppMainWindow(QMainWindow):
     def __init__ (self):
         super(AppMainWindow, self).__init__()
         #window setting
-        self.setMinimumHeight(500)
-        self.setMinimumWidth(700)
-        self.setMaximumHeight(500)
-        self.setMaximumWidth(700)
+        self.setMinimumHeight(540)
+        self.setMinimumWidth(780)
+        self.setMaximumHeight(540)
+        self.setMaximumWidth(780)
 
         windowItems = ButtonWidgets()
         self.setCentralWidget(windowItems)
+
+    def closeEvent(self, event):
+        #アプリ終了時に呼ばれる
+        event.accept()
+
 app = QApplication(sys.argv)
 window = AppMainWindow()
 window.show()
