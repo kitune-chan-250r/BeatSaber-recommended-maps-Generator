@@ -1,3 +1,16 @@
-dir = "/Users/hisuinekoo/Library/Application Support/Sublime Text 3/Packages/User/python codes/aki-kun surv/BeatSaber-recommended-maps-Generator"
+dic = {
+    "song":{
+        "pp": 32,
+        "pf": "expt"
+    },
+    "song":{
+        "pp": 32,
+        "pf": "expt"
+    },
+    "song":{
+        "pp": 32,
+        "pf": "expt"
+    }
+}
 
-f = open(dir)
+print(type(dic))
