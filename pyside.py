@@ -45,7 +45,11 @@ class CustomQWidget(QWidget):
         self.allQHBoxLayout.addWidget(self.ppgapQLabel, 3)
         #レイアウトの設定
         self.setLayout(self.allQHBoxLayout)
+        
         # setStyleSheet
+        self.song_font = QFont()
+        self.song_font.setPointSize(20)
+
         """
         self.songQLabel.setStyleSheet('''
             color: rgb(0, 0, 255);
@@ -53,21 +57,27 @@ class CustomQWidget(QWidget):
         self.usersppQLabel.setStyleSheet('''
             color: rgb(255, 0, 0);
         ''')
-"""
+""" 
     def setSong (self, text):
         self.songQLabel.setText(text)
+        self.songQLabel.setFont(self.song_font)
+        self.songQLabel.setStyleSheet("QLabel{color: white}")
 
     def setPP (self, text):
         self.usersppQLabel.setText(text)
+        self.usersppQLabel.setStyleSheet("QLabel{color: white}")
 
     def setPPgap(self, text):
         self.ppgapQLabel.setText(text)
+        self.ppgapQLabel.setStyleSheet("QLabel{color: white}")
 
     def setAccuracy(self, text):
         self.accuracyQLabel.setText(text)
+        self.accuracyQLabel.setStyleSheet("QLabel{color: white}")
 
     def setRank(self, text):
         self.rankQLabel.setText(text)
+        self.rankQLabel.setStyleSheet("QLabel{color: white}")
     
     def setIcon (self, imagePath):
         #画像を追加、リサイズ
@@ -92,7 +102,7 @@ class BuckGroundProcess(QThread):
 
     def run(self): #バックグラウンド処理
         global songs
-        
+
         print(self.username)
         my_userid,my_rank = ScoreSaber.srch_usr_name(self.username)
         aboveusr_id = ScoreSaber.get_ranker(my_rank-1)
@@ -125,7 +135,7 @@ class ButtonWidgets(QWidget):
             accuracy = "accuracy: {}%".format(song["accuracy"])
             rank = "#" + song["rank"]
             #make image
-            #img = "./assets/ki - vy.png"
+            #img = "./assets/ki - vy.png QLineEdit { background-color: yellow }""
 
             myQCustomQWidget = CustomQWidget()
             myQCustomQWidget.setSong(song_name)
@@ -139,13 +149,17 @@ class ButtonWidgets(QWidget):
             # Set size hint
             self.myQListWidgetItem.setSizeHint(myQCustomQWidget.sizeHint())
             # Add QListWidgetItem into QListWidget
-            self.myQListWidget.addItem(self.myQListWidgetItem)
+            self.myQListWidget.addItem(self.myQListWidgetItem.setFlags(Qt.NoItemFlags))
             self.myQListWidget.setItemWidget(self.myQListWidgetItem, myQCustomQWidget)
         
         #button set
         refButton = QPushButton("ref", self)
         refButton.clicked.connect(self.ref_button)
+        self.status_label = QLabel()
+        self.update_status("status")#init
+
         self.usernameBox = QLineEdit()
+        self.usernameBox.setStyleSheet("QLineEdit{background-color: #2E2F29 ;color : white; border: none}")
 
         self.myQListWidget.setAttribute(Qt.WA_MacShowFocusRect, 0)
         self.myQListWidget.setFrameStyle(QFrame.NoFrame)
@@ -153,12 +167,16 @@ class ButtonWidgets(QWidget):
         #add widget
         self.buttonLayout.addWidget(refButton)
         self.buttonLayout.addWidget(self.usernameBox)
+        self.buttonLayout.addWidget(self.status_label)
 
         #set layout and wedgets -> main layout
         self.MainWindowLayout.addWidget(self.myQListWidget)
         self.MainWindowLayout.addLayout(self.buttonLayout)
         # set layout
         self.setLayout(self.MainWindowLayout)
+
+        #set stylesheet
+        self.setStyleSheet("""QListWidget{background-color:#1E2125}""")
 
     def ref_button(self):
         self.myQListWidget.clear()
@@ -172,7 +190,7 @@ class ButtonWidgets(QWidget):
         print("rcv finsignal")
         for song in songs:
             song_name = song["songname"]
-            ppgap = str(song["pp_gap"])
+            ppgap = str(round(song["pp_gap"], 2))
             tmp = ScoreSaber.srch_song_data(song_name, my_songdata)
 
             pp = str(tmp["pp"]) + "pp"
@@ -193,11 +211,13 @@ class ButtonWidgets(QWidget):
             # Set size hint
             myQListWidgetItem.setSizeHint(myQCustomQWidget.sizeHint())
             # Add QListWidgetItem into QListWidget
-            self.myQListWidget.addItem(myQListWidgetItem)
+            self.myQListWidget.addItem(myQListWidgetItem.setFlags(Qt.NoItemFlags))
             self.myQListWidget.setItemWidget(myQListWidgetItem, myQCustomQWidget)
-        
         self.myQListWidget.update()
 
+    def update_status(self, status):
+        self.status_label.setText(status)
+        self.status_label.setStyleSheet("QLabel{color: white}")
 
 #main window
 class AppMainWindow(QMainWindow):
@@ -211,6 +231,7 @@ class AppMainWindow(QMainWindow):
 
         windowItems = ButtonWidgets()
         self.setCentralWidget(windowItems)
+        self.setStyleSheet("QMainWindow{background-color:#1E2125}")
 
     def closeEvent(self, event):
         #アプリ終了時に呼ばれる
