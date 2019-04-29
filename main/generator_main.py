@@ -4,6 +4,7 @@ from PySide2.QtGui import *
 from PySide2.QtCore import *
 import ScoreSaber
 import requests
+from multiprocessing import Pipe,Process
 
 
 songs = [{"song":"songname", "pp": "123", "image":"kivy.png", "accuracy": "50%", "rank": "43", "ppgap": "+11"},
@@ -104,11 +105,28 @@ class BuckGroundProcess(QThread):
         global songs
 
         print(self.username)
+        """
         my_userid,my_rank = ScoreSaber.srch_usr_name(self.username)
         aboveusr_id = ScoreSaber.get_ranker(my_rank-1)
 
         my_songdata = ScoreSaber.all_song_data(my_userid)
         aboveusr_songdata = ScoreSaber.all_song_data(aboveusr_id)
+
+        pp_gap = ScoreSaber.compare_song_pp(my_songdata, aboveusr_songdata)
+        """
+        main_to_sub,sub_to_main = Pipe() #通信用パイプ生成
+        my_userid,my_rank = ScoreSaber.srch_usr_name("fox100")
+        aboveusr_id = ScoreSaber.get_ranker(my_rank-1)
+
+        def sub_proc(abov_id,pipe):#サブプロセス化する関数
+            aboveusr_songdata = ScoreSaber.all_song_data(abov_id)
+            pipe.send(aboveusr_songdata)
+            return True
+        pr = Process(target=sub_proc, args=(aboveusr_id, sub_to_main))
+        pr.start()
+        my_songdata = ScoreSaber.all_song_data(my_userid)
+        aboveusr_songdata = main_to_sub.recv()
+        pr.join()
 
         pp_gap = ScoreSaber.compare_song_pp(my_songdata, aboveusr_songdata)
         
@@ -165,9 +183,9 @@ class ButtonWidgets(QWidget):
         self.myQListWidget.setFrameStyle(QFrame.NoFrame)
         
         #add widget
-        self.buttonLayout.addWidget(refButton)
-        self.buttonLayout.addWidget(self.usernameBox)
         self.buttonLayout.addWidget(self.status_label)
+        self.buttonLayout.addWidget(self.usernameBox)
+        self.buttonLayout.addWidget(refButton)
 
         #set layout and wedgets -> main layout
         self.MainWindowLayout.addWidget(self.myQListWidget)
@@ -179,6 +197,7 @@ class ButtonWidgets(QWidget):
         self.setStyleSheet("""QListWidget{background-color:#1E2125}""")
 
     def ref_button(self):
+        self.update_status("Downloading song data...")
         self.myQListWidget.clear()
         username = self.usernameBox.text()
         #self.bgp = BuckGroundProcess()
@@ -214,6 +233,7 @@ class ButtonWidgets(QWidget):
             self.myQListWidget.addItem(myQListWidgetItem.setFlags(Qt.NoItemFlags))
             self.myQListWidget.setItemWidget(myQListWidgetItem, myQCustomQWidget)
         self.myQListWidget.update()
+        self.update_status("Analysis finished!")
 
     def update_status(self, status):
         self.status_label.setText(status)
@@ -237,10 +257,12 @@ class AppMainWindow(QMainWindow):
         #アプリ終了時に呼ばれる
         event.accept()
 
-app = QApplication(sys.argv)
-window = AppMainWindow()
-window.show()
-app.exec_()
+#main process
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    window = AppMainWindow()
+    window.show()
+    app.exec_()
 
 
 
