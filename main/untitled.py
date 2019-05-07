@@ -1,20 +1,9 @@
-import sys
-from PySide2.QtWidgets import *
-from PySide2.QtGui import *
-from PySide2.QtCore import *
+import requests
+import json
 
-class AppMainWindow(QMainWindow):
-    def __init__ (self):
-        super(AppMainWindow, self).__init__()
-        refButton = QPushButton("")
-        refButton.setIcon(QIcon(QPixmap("assets/button_ref.png")))
-        refButton.setStyleSheet("QPushButton{border: 0px solid; height: 21px;width: 71px;}")
-        refButton.setIconSize(QSize(71, 21))
-        self.setCentralWidget(refButton)
+def get_songdata():
+    return requests.get("http://scoresaber.com/api.php?function=get-leaderboards&cat=1&page=1&limit=20").json()
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    window = AppMainWindow()
-    window.show()
-    app.exec_()
+###func###
 
+print(get_songdata())
