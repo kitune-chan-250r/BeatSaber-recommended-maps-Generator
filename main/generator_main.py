@@ -115,7 +115,7 @@ class BuckGroundProcess(QThread):
         pp_gap = ScoreSaber.compare_song_pp(my_songdata, aboveusr_songdata)
         """
         main_to_sub,sub_to_main = Pipe() #通信用パイプ生成
-        my_userid,my_rank = ScoreSaber.srch_usr_name("fox100")
+        my_userid,my_rank = ScoreSaber.srch_usr_name(self.username)
         aboveusr_id = ScoreSaber.get_ranker(my_rank-1)
 
         def sub_proc(abov_id,pipe):#サブプロセス化する関数
