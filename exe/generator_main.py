@@ -275,3 +275,4 @@ if __name__ == '__main__':
 
 
 
+#pyinstaller generator_main.py --onefile --noconsole -p "G:\python3.6\Lib\site-packages\PySide2"
