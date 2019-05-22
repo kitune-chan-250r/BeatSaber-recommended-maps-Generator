@@ -115,7 +115,7 @@ class BuckGroundProcess(QThread):
         pp_gap = ScoreSaber.compare_song_pp(my_songdata, aboveusr_songdata)
         """
         main_to_sub,sub_to_main = Pipe() #通信用パイプ生成
-        my_userid,my_rank = ScoreSaber.srch_usr_name("fox100")
+        my_userid,my_rank = ScoreSaber.srch_usr_name(self.username)
         aboveusr_id = ScoreSaber.get_ranker(my_rank-1)
 
         def sub_proc(abov_id,pipe):#サブプロセス化する関数
@@ -170,20 +170,29 @@ class ButtonWidgets(QWidget):
             self.myQListWidget.addItem(self.myQListWidgetItem.setFlags(Qt.NoItemFlags))
             self.myQListWidget.setItemWidget(self.myQListWidgetItem, myQCustomQWidget)
         
-        #button set
-        refButton = QPushButton("ref", self)
+        #button setting
+        refButton = QPushButton("")
+        refButton.setStyleSheet("QPushButton{height: 21px;width: 71px; border: 0px solid}")
+        refButton.setIcon(QIcon(QPixmap("assets/button_ref.png")))
+        refButton.setIconSize(QSize(71, 21))
+        #x,y,w,h
         refButton.clicked.connect(self.ref_button)
+
+        #status label setting
         self.status_label = QLabel()
         self.update_status("status")#init
 
+        #QLine Edit setting
         self.usernameBox = QLineEdit()
-        self.usernameBox.setStyleSheet("QLineEdit{background-color: #2E2F29 ;color : white; border: none}")
+        self.usernameBox.setMaximumWidth(160)
 
+        self.usernameBox.setStyleSheet("QLineEdit{background-color: #2E2F29 ;color : white; border: none;height: 21px;width: 40px;}")
         self.myQListWidget.setAttribute(Qt.WA_MacShowFocusRect, 0)
         self.myQListWidget.setFrameStyle(QFrame.NoFrame)
         
         #add widget
         self.buttonLayout.addWidget(self.status_label)
+        self.buttonLayout.addSpacing(400)
         self.buttonLayout.addWidget(self.usernameBox)
         self.buttonLayout.addWidget(refButton)
 
