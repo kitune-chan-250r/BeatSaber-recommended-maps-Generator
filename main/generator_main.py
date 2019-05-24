@@ -101,6 +101,11 @@ class BuckGroundProcess(QThread):
     def setup(self, username):
         self.username = username
 
+    def sub_proc(abov_id,pipe):#サブプロセス化する関数
+            aboveusr_songdata = ScoreSaber.all_song_data(abov_id)
+            pipe.send(aboveusr_songdata)
+            return True
+
     def run(self): #バックグラウンド処理
         global songs
 
@@ -117,12 +122,13 @@ class BuckGroundProcess(QThread):
         main_to_sub,sub_to_main = Pipe() #通信用パイプ生成
         my_userid,my_rank = ScoreSaber.srch_usr_name(self.username)
         aboveusr_id = ScoreSaber.get_ranker(my_rank-1)
-
+        """
         def sub_proc(abov_id,pipe):#サブプロセス化する関数
             aboveusr_songdata = ScoreSaber.all_song_data(abov_id)
             pipe.send(aboveusr_songdata)
             return True
-        pr = Process(target=sub_proc, args=(aboveusr_id, sub_to_main))
+        """
+        pr = Process(target=self.sub_proc, args=(aboveusr_id, sub_to_main))
         pr.start()
         my_songdata = ScoreSaber.all_song_data(my_userid)
         aboveusr_songdata = main_to_sub.recv()
